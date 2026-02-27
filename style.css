@@ -1,0 +1,30 @@
+body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 600px; 
+            margin: 0 auto;  
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        #results img {
+            max-height: 400px;
+            margin-top: 15px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .lead {
+            margin-bottom: 30px; 
+        }
