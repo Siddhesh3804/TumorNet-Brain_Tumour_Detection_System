@@ -215,7 +215,6 @@ streamlit run app/app.py
 
 ## 📸 Screenshots
 
-*Add your project screenshots here*
 
 ---
 
@@ -233,20 +232,6 @@ streamlit run app/app.py
 * 📱 Mobile app deployment
 * ☁️ Cloud-based prediction API
 * 🧠 Use advanced architectures (ResNet, EfficientNet)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome!
-
-Steps:
-
-1. Fork the repository
-2. Create your branch (`git checkout -b feature-name`)
-3. Commit changes
-4. Push to branch
-5. Open a Pull Request
 
 ---
 
