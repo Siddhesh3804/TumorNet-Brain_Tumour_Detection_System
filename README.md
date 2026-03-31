@@ -218,14 +218,6 @@ streamlit run app/app.py
 
 ---
 
-## ⚠️ Limitations
-
-* Not a replacement for medical professionals
-* Requires high-quality MRI images
-* Dataset bias may affect performance
-
----
-
 ## 🔮 Future Improvements
 
 * 🔍 Tumor segmentation (highlight tumor area)
