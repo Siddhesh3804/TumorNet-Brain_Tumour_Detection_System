@@ -3,6 +3,7 @@
 import base64
 import sqlite3
 import traceback
+import os
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
@@ -473,9 +474,23 @@ def delete_user_report(user_id, report_id):
     return jsonify(success=True, message="Report deleted successfully")
 
 
+# if __name__ == "__main__":
+#     create_users_table()
+#     create_reports_table()
+#     print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
+#     app.run(host="127.0.0.1", port=5050, debug=False, use_reloader=False)
+
 if __name__ == "__main__":
     create_users_table()
     create_reports_table()
-    print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
-    app.run(host="127.0.0.1", port=5050, debug=False, use_reloader=False)
 
+    print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
+
+    port = int(os.environ.get("PORT", 5050))
+
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False,
+        use_reloader=False
+    )
