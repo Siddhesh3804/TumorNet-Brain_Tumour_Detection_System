@@ -1,3 +1,4 @@
+import API from "../services/api";
 import { useEffect, useState } from "react";
 import { Eye, FileText, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -22,7 +23,7 @@ export default function ReportsPage() {
     setMessage("");
 
     try {
-      const response = await fetch(`http://127.0.0.1:5050/api/users/${currentUser.id}/reports`);
+      const response = await fetch(`${API}/api/users/${currentUser.id}/reports`);
       const data = await readJsonResponse(response);
 
       if (!response.ok || data.success === false) {
@@ -63,7 +64,7 @@ export default function ReportsPage() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:5050/api/users/${currentUser.id}/reports/${report.id}`,
+        `${API}/api/users/${currentUser.id}/reports/${report.id}`,
         { method: "DELETE" }
       );
       const data = await readJsonResponse(response);

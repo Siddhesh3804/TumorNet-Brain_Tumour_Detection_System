@@ -1,3 +1,4 @@
+import API from "../services/api";
 import { useRef, useState } from "react";
 import { Document, Image, Page, StyleSheet, Text, View, pdf } from "@react-pdf/renderer";
 import { useAuth } from "../context/AuthContext";
@@ -802,7 +803,7 @@ function ActionsBlock({ analyzed, reset, reportData, latestPdfUrl, setLatestPdfU
       }));
       formData.append("pdf_file", blob, filename);
 
-      const response = await fetch(`http://127.0.0.1:5050/api/users/${userId}/reports`, {
+      const response = await fetch(`${API}/api/predict`, {
         method: "POST",
         body: formData,
       });
@@ -890,7 +891,7 @@ export default function UploadPage() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:5050/api/predict", {
+      const response = await fetch(`${API}/api/predict`, {
         method: "POST",
         body: formData,
       });

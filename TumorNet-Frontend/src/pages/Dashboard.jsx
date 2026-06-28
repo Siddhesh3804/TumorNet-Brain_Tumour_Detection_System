@@ -1,3 +1,4 @@
+import API from "../services/api";
 import { createElement, useEffect, useMemo, useState } from "react";
 import { Activity, BrainCircuit, Clock, FileText, LayoutDashboard, LogOut, ScanLine, Upload, User } from "lucide-react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -19,7 +20,7 @@ export default function Dashboard(){
 
   useEffect(() => {
     if (!currentUser?.id) return;
-    fetch(`http://127.0.0.1:5050/api/users/${currentUser.id}/reports`)
+    fetch(`${API}/api/users/${currentUser.id}/reports`)
       .then((response) => response.ok ? response.json() : { reports: [] })
       .then((data) => setReports(data.reports || []))
       .catch(() => setReports([]));

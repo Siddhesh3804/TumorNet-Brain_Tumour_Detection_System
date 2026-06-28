@@ -1,3 +1,4 @@
+import API from "../services/api";
 import { useEffect, useState } from "react";
 import { Mail, Pencil, Save, ShieldCheck, UserRound, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -17,7 +18,7 @@ export default function Profile() {
   useEffect(() => {
     if (!currentUser?.id) return;
 
-    fetch(`http://127.0.0.1:5050/api/users/${currentUser.id}`)
+    fetch(`${API}/api/users/${currentUser.id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success && data.user) {
@@ -57,7 +58,7 @@ export default function Profile() {
     setMessage("");
 
     try {
-      const response = await fetch(`http://127.0.0.1:5050/api/users/${currentUser.id}`, {
+      const response = await fetch(`${API}/api/users/${currentUser.id}` , {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
