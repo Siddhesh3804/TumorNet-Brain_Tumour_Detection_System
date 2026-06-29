@@ -115,11 +115,11 @@ def create_reports_table():
         )
         connection.commit()
 
-        # Initialize database tables when the application is imported
-        create_users_table()
-        create_reports_table()
+# Initialize database tables when the application is imported
+create_users_table()
+create_reports_table()
 
-        print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
+print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
 
 
 def allowed_file(filename):
