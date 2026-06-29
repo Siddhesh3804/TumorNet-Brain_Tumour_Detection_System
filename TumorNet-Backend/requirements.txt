@@ -42,6 +42,7 @@ rich==15.0.0
 setuptools==82.0.1
 six==1.17.0
 SQLAlchemy==2.0.51
+tensorflow-cpu==2.18.0
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
 termcolor==3.3.0
