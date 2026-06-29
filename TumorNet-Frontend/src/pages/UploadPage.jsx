@@ -612,14 +612,12 @@ function TumorNetReportDocument({ currentUser, result, preview, file, generatedA
           </View>
           <View style={reportStyles.meta}>
             <View style={reportStyles.metaRow}>
-              <Text style={reportStyles.metaIcon}>ID</Text>
               <View>
                 <Text style={reportStyles.metaLabel}>Report ID</Text>
                 <Text style={reportStyles.metaValue}>{reportId}</Text>
               </View>
             </View>
             <View style={reportStyles.metaRow}>
-              <Text style={reportStyles.metaIcon}>DT</Text>
               <View>
                 <Text style={reportStyles.metaLabel}>Report Generated</Text>
                 <Text style={reportStyles.metaValue}>{generatedAt}</Text>
@@ -630,27 +628,22 @@ function TumorNetReportDocument({ currentUser, result, preview, file, generatedA
 
         <View style={reportStyles.section}>
           <View style={reportStyles.sectionTitleRow}>
-            {/* <Text style={reportStyles.sectionIcon}>01</Text> */}
             <Text style={reportStyles.sectionTitle}>1. Patient Information</Text>
           </View>
           <View style={reportStyles.tableBox}>
             <View style={reportStyles.row}>
               <View style={[reportStyles.cell, reportStyles.cellBorder]}>
-                {/* <Text style={reportStyles.cellIcon}>U</Text> */}
                 <View><Text style={reportStyles.label}>Full Name</Text><Text style={reportStyles.value}>{fitText(currentUser?.full_name || currentUser?.name || "-", 42)}</Text></View>
               </View>
               <View style={reportStyles.cell}>
-                {/* <Text style={reportStyles.cellIcon}>U</Text> */}
                 <View><Text style={reportStyles.label}>Username</Text><Text style={reportStyles.value}>{fitText(currentUser?.username || "-", 42)}</Text></View>
               </View>
             </View>
             <View style={[reportStyles.row, currentUser?.patient_id || currentUser?.age || currentUser?.gender ? null : reportStyles.lastRow]}>
               <View style={[reportStyles.cell, reportStyles.cellBorder]}>
-                {/* <Text style={reportStyles.cellIcon}>@</Text> */}
                 <View><Text style={reportStyles.label}>Email</Text><Text style={reportStyles.value}>{fitText(currentUser?.email || "-", 44)}</Text></View>
               </View>
               <View style={reportStyles.cell}>
-                {/* <Text style={reportStyles.cellIcon}>DT</Text> */}
                 <View><Text style={reportStyles.label}>Report Date & Time</Text><Text style={reportStyles.value}>{generatedAt}</Text></View>
               </View>
             </View>
@@ -671,7 +664,6 @@ function TumorNetReportDocument({ currentUser, result, preview, file, generatedA
 
         <View style={reportStyles.section}>
           <View style={reportStyles.sectionTitleRow}>
-            {/* <Text style={reportStyles.sectionIcon}>02</Text> */}
             <Text style={reportStyles.sectionTitle}>2. MRI Analysis Result</Text>
           </View>
           <View style={reportStyles.analysisBox}>
@@ -714,7 +706,6 @@ function TumorNetReportDocument({ currentUser, result, preview, file, generatedA
 
         <View style={reportStyles.section}>
           <View style={reportStyles.sectionTitleRow}>
-            {/* <Text style={reportStyles.sectionIcon}>04</Text> */}
             <Text style={reportStyles.sectionTitle}>4. Recommended Oncology Centers (Reference Only)</Text>
           </View>
           <View style={reportStyles.hospitalGrid}>
@@ -775,6 +766,28 @@ async function createReportPdfBlob({ currentUser, result, preview, file }) {
   ).toBlob();
 }
 
+async function saveAnalysisReport({ currentUser, result }) {
+  if (!currentUser?.id || !result) return;
+
+  const response = await fetch(`${API}/api/users/${currentUser.id}/reports`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title: `${result?.display_label || "MRI"} Analysis Report`,
+      detected_type: result?.display_label || "-",
+      analysis_date: new Date().toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+      pdf_data: "",
+    }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.success === false) {
+    throw new Error(data.message || "Unable to save report record");
+  }
+}
+
 function ActionsBlock({ analyzed, reset, reportData, latestPdfUrl, setLatestPdfUrl, setNotice }) {
   const downloadReport = async () => {
     if (!analyzed) return;
@@ -790,31 +803,6 @@ function ActionsBlock({ analyzed, reset, reportData, latestPdfUrl, setLatestPdfU
     link.remove();
     setLatestPdfUrl(url);
     setNotice("Report has been downloaded.");
-
-    try {
-      const userId = reportData.currentUser?.id;
-      if (!userId) return;
-      const formData = new FormData();
-      formData.append("title", `${reportData.result?.display_label || "MRI"} Analysis Report`);
-      formData.append("detected_type", reportData.result?.display_label || "-");
-      formData.append("analysis_date", new Date().toLocaleString("en-IN", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }));
-      formData.append("pdf_file", blob, filename);
-
-      const response = await fetch(`${API}/api/predict`, {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data.success === false) {
-        throw new Error(data.message || "Report save failed");
-      }
-      setNotice("Report has been downloaded and saved to Reports.");
-    } catch {
-      setNotice("Report downloaded, but could not be saved to Reports.");
-    }
   };
 
   const viewReport = () => {
@@ -903,6 +891,12 @@ export default function UploadPage() {
 
       setResult(data);
       setAnalyzed(true);
+      try {
+        await saveAnalysisReport({ currentUser, result: data });
+        setNotice("Prediction completed and saved to Reports.");
+      } catch (reportError) {
+        setNotice(reportError.message || "Prediction completed, but report history was not saved.");
+      }
     } catch (predictionError) {
       setAnalyzed(false);
       setResult(null);

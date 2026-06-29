@@ -115,6 +115,12 @@ def create_reports_table():
         )
         connection.commit()
 
+        # Initialize database tables when the application is imported
+        create_users_table()
+        create_reports_table()
+
+        print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
+
 
 def allowed_file(filename):
     """Return true when the uploaded file extension is supported."""
@@ -418,8 +424,8 @@ def save_user_report(user_id):
         analysis_date = str(data.get("analysis_date", "")).strip()
         pdf_data = str(data.get("pdf_data", "")).strip()
 
-    if not all((title, detected_type, analysis_date, pdf_data)):
-        return jsonify(success=False, message="Report title, date, type, and PDF data are required"), 400
+    if not all((title, detected_type, analysis_date)):
+        return jsonify(success=False, message="Report title, date, and type are required"), 400
 
     created_at = datetime.now().isoformat(timespec="seconds")
 
@@ -474,18 +480,9 @@ def delete_user_report(user_id, report_id):
     return jsonify(success=True, message="Report deleted successfully")
 
 
-# if __name__ == "__main__":
-#     create_users_table()
-#     create_reports_table()
-#     print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
-#     app.run(host="127.0.0.1", port=5050, debug=False, use_reloader=False)
+print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
 
 if __name__ == "__main__":
-    create_users_table()
-    create_reports_table()
-
-    print(f"[DATABASE] Using SQLite database: {DATABASE_PATH}", flush=True)
-
     port = int(os.environ.get("PORT", 5050))
 
     app.run(
